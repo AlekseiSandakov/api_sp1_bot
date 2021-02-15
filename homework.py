@@ -55,16 +55,16 @@ def send_message(message, bot_client):
     logging.debug('Момент запуска!')
     logging.info('Отправка сообщения!')
     logging.error('Ошибка!')
-    return bot_client.send_message(CHAT_ID, text=message)
+    bot_client = telegram.Bot(token=TELEGRAM_TOKEN)
+    return bot_client.send_message(CHAT_ID, 'Сообщение отправляется')
 
 
 def main():
-    bot_client = telegram.Bot(token=TELEGRAM_TOKEN)
-    logging.debug('Момент запуска!')
-    current_timestamp = int(time.time())
-
     while True:
         try:
+            bot_client = telegram.Bot(token=TELEGRAM_TOKEN)
+            logging.debug('Момент запуска!')
+            current_timestamp = int(time.time())
             new_homework = get_homework_statuses(current_timestamp)
             if new_homework.get('homeworks'):
                 var1 = parse_homework_status(new_homework.get('homeworks')[0])
@@ -72,9 +72,9 @@ def main():
             current_timestamp = new_homework.get('current_date',
                                                  current_timestamp)
             time.sleep(LONG_TIME)
-        except Exception:
-            logging.exception()
-            return bot_client.send_message(CHAT_ID, 'Ошибка получения статуса')
+        except Exception as error:
+            logging.error(error, exc_info=True)
+            return bot_client.send_message(CHAT_ID, 'Ошибка запуска бота!')
             time.sleep(SHORT_TIME)
 
 
